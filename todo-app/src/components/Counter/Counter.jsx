@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import './Counter.css'
+//import './Counter.css'
 import propTypes from 'prop-types'
 
 

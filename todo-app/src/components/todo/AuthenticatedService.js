@@ -1,8 +1,5 @@
 class AuthenticatedService{
 
-
-
-
     registerSuccessFul(username,password){
         console.log("RegisterSuccessFull")
         sessionStorage.setItem("AuthenticatedUser",username)
@@ -21,6 +18,18 @@ class AuthenticatedService{
             return false
         }else{
         return true
+        }
+
+    }
+
+    getUserName(){
+        let user = sessionStorage.getItem("AuthenticatedUser")
+        
+        if(user===null)
+        {
+            return ''
+        }else{
+        return user
         }
 
     }
