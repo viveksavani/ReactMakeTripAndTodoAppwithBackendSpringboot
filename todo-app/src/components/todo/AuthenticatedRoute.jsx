@@ -1,17 +1,16 @@
-import { Component } from "react";
-import AuthenticatedService from "./AuthenticatedService";
-import { Route,Redirect } from "react-router-dom";
+import React, { Component } from 'react'
+import { Navigate } from 'react-router-dom'
+import AuthenticatedService from './AuthenticatedService'
 
-class AuthenticateRoute extends Component{
 
-    render(){
-        
-        if(AuthenticatedService.isUserLoggedIn()){
-           return <Route {...this.props} />
-        }else{
-            return <Route to="/login"/>
-        }
+class AuthenticatedRoute extends Component {
+  render() {
+    if (AuthenticatedService.isUserLoggedIn()) {
+      return {...this.props.children}
+    } else {
+      return <Navigate to="/login" />
     }
+  }
 }
 
-export default AuthenticateRoute
+export default AuthenticatedRoute

@@ -22,8 +22,7 @@ function WelcomeComponent() {
           .catch(function (error) {
            
             console.log(error);
-            setwelcomeMessage(error.response.data.message)
-            setStatus(error.response.data.status)
+            handleError(error)
           });
       }
 
@@ -32,6 +31,23 @@ function WelcomeComponent() {
         // setStatus(response.status)
         setwelcomeMessage(response.data.message)
         setStatus(response.data.name)
+      }
+
+      function handleError(error) {
+       
+        console.log(error.response)
+
+        let errorMessage ='';
+
+        if(error.message)
+          errorMessage+=error.message
+
+        if(error.response && error.response.data){
+          errorMessage+= error.response.data.message
+        }  
+
+        setwelcomeMessage(errorMessage)
+        setStatus(error.response.data.status)
       }
 
     

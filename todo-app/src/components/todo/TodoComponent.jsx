@@ -1,18 +1,61 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import moment from "moment/moment";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import TodoService from "../../api/todo/TodoService";
+import AuthenticatedService from "./AuthenticatedService";
 
 function TodoComponent() {
     const { id } = useParams();
-    const [todo, setTodo] = useState({id:id,description:'learn react js',targetDate:moment(new Date()).format('YYYY-MM-DD') });
+    const navigate = useNavigate();
+    const [todo, setTodo] = useState({id:id,description:'',targetDate:moment(new Date()).format('YYYY-MM-DD') });
     let {description,targetDate} = todo;
   // let targetDate = todo.targetDate;
   // let description = todo.description;
   
 
+    useEffect(() => {
+       
+        if (id === -1) {
+            return
+        }
+        else {
+            let username = AuthenticatedService.getUserName();
+
+            TodoService.retriveTodo(username, id).then(
+                response => {
+                    console.log(response)
+                    setTodo({
+                        ...todo,
+                        description: response.data.description,
+                        targetDate: moment(response.data.targetDate).format('YYYY-MM-DD')
+                    });
+                }
+            )
+
+        }
+    }, []);
+            
+
     function OnSubmit(values){
         console.log(values)
+        let username = AuthenticatedService.getUserName();
+
+        let todo = {
+            id: id,
+            description: values.description,
+            targetDate: values.targetDate
+        }
+        if (id === -1) {
+            TodoService.createTodo(username,todo).then(
+                () =>  navigate("/todos")
+            )
+        } else {
+
+            TodoService.updateTodo(username, id,todo).then(
+                () =>  navigate("/todos")
+            )
+        }
     }
 
     function OnValidate(values){
@@ -47,6 +90,7 @@ function TodoComponent() {
                                     targetDate }}
                             onSubmit={OnSubmit}   
                             validate={OnValidate}
+                            enableReinitialize={true}
                                 
                                 >
                         {

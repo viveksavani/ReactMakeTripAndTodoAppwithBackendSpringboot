@@ -1,67 +1,82 @@
-import { Component } from "react";
+import { useEffect, useState } from "react";
 import AuthenticatedService from "./AuthenticatedService";
 import TodoService from "../../api/todo/TodoService";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 
-class ListTodosComponent extends Component {
+function ListTodosComponent(props) {
 
-    constructor(props) {
-        super(props);
-        console.log('constructor')
+    // constructor(props) {
+    //     super(props);
+    //     console.log('constructor')
 
-        this.state = {
-            todos: [
-                // { id: 1, description: "Learn React", done: false, targetDate: new Date() },
-                // { id: 2, description: "Learn Dance", done: false, targetDate: new Date() },
-                // { id: 3, description: "Visit India", done: false, targetDate: new Date() }
-            ],
-            message:null
-        }
+        // this.state = {
+        //     todos: [
+        //         // { id: 1, description: "Learn React", done: false, targetDate: new Date() },
+        //         // { id: 2, description: "Learn Dance", done: false, targetDate: new Date() },
+        //         // { id: 3, description: "Visit India", done: false, targetDate: new Date() }
+        //     ],
+        //     message:null
+        // }
+        const navigate = useNavigate();
+        const [todos, settodos] = useState([]);
+        const [message, setmessage] = useState(null);
 
-        this.deleteTodoClicked = this.deleteTodoClicked.bind(this)
-        this.todoRefreshed = this.todoRefreshed.bind(this)
-    }
+        // this.deleteTodoClicked = this.deleteTodoClicked.bind(this)
+        // this.todoRefreshed = this.todoRefreshed.bind(this)
+    
 
 
-    deleteTodoClicked(id){
+    function deleteTodoClicked(id){
         let username = AuthenticatedService.getUserName();
         console.log(id+" "+username)
 
         TodoService.deleteTodoById(username,id)
         .then(
-            response =>{
+            () =>{
 
-                this.setState({message:`Delete Todo SuccesFull With ${id}`})
-                this.todoRefreshed()
+                setmessage(`Delete Todo SuccesFull With ${id}`)
+                todoRefreshed()
             }
         )
     }
 
-    updateTodoClicked=(id)=>{
+     function updateTodoClicked(id){
         
         console.log(id+" update")
-        window.location.href = `/todos/${id}`;
+        //window.location.href = `/todos/${id}`;
+        navigate(`/todos/${id}`)
+    }
+
+    function addTodoClicked(){
+        
+        console.log(" add todo")
+        //window.location.href = '/todos/-1';
+        navigate('/todos/-1')
        
     }
 
-    componentWillUnmount(){
-        console.log('componentWillUnmount')
-    }
+    // function componentWillUnmount(){
+    //     console.log('componentWillUnmount')
+    // }
 
-    shouldComponentUpdate(nextProps,nextState){
-        console.log('shouldComponentUpdate')
-        console.log('nextProps')
-        console.log('nextState')
-        return true
+    // function shouldComponentUpdate(nextProps,nextState){
+    //     console.log('shouldComponentUpdate')
+    //     console.log('nextProps')
+    //     console.log('nextState')
+    //     return true
         
-    }
+    // }
 
-    componentDidMount(){
+    useEffect(() => {
         console.log('componentDidMount')
-       this.todoRefreshed()
-    }
+       todoRefreshed()
+    }, []);
 
-    todoRefreshed(){
+     
+
+    function todoRefreshed(){
         let username = AuthenticatedService.getUserName();
 
         TodoService.retriveAllTodos(username).
@@ -69,9 +84,10 @@ class ListTodosComponent extends Component {
 
             response=>{
                 console.log(response)
-                this.setState({
-                    todos:response.data
-                })
+                // this.setState({
+                //     todos:response.data
+                // })
+                settodos(response.data)
             }
         ).catch(
 
@@ -84,12 +100,11 @@ class ListTodosComponent extends Component {
 
 
 
-    render() {
-        console.log('render')
+   
         return (
             <div className="todos">
                 <h1>List Todos</h1>
-                {this.state.message && <div className="alert alert-success">{this.state.message} </div>}
+                {message && <div className="alert alert-success">{message} </div>}
                 <div className="container">
 
                 <table className="table">
@@ -105,26 +120,27 @@ class ListTodosComponent extends Component {
                     </thead>
                     <tbody>
                         {
-                            this.state.todos.map(
+                            todos.map(
                                 todo =>
                                     <tr key={todo.id}>
                                         <td>{todo.id}</td>
                                         <td>{todo.description}</td>
                                         <td>{todo.done.toString()}</td>
-                                        <td>{todo.targetDate.toString()}</td>
-                                        <td><button className="btn btn-primary" onClick={()=>this.updateTodoClicked(todo.id)}>Update Todo</button></td>
-                                        <td><button className="btn btn-danger" onClick={()=>this.deleteTodoClicked(todo.id)}>Delete Todo</button></td>
+                                        <td>{moment(todo.targetDate).format('YYYY-MM-DD')}</td>
+                                        <td><button className="btn btn-primary" onClick={()=>updateTodoClicked(todo.id)}>Update Todo</button></td>
+                                        <td><button className="btn btn-danger" onClick={()=>deleteTodoClicked(todo.id)}>Delete Todo</button></td>
                                     </tr>
 
                             )
                         }
                     </tbody>
                 </table>
+                <div className="btn btn-success" onClick={addTodoClicked}>Add Todo</div>
                 </div>
             </div>
 
         )
     }
-}
+
 
 export default ListTodosComponent
