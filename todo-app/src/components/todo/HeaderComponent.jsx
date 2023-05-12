@@ -11,7 +11,7 @@ function HeaderComponent() {
             <nav className="navbar navbar-expand-md navbar-dark bg-dark">
                 <div><a href="" className="navbar-brand">Todo APP</a></div>
                 <ul className="navbar-nav">
-                    {userLoggedIn && <li><Link className="nav-link" to="/welcome/in28minutes">Home</Link></li>}
+                    {userLoggedIn && <li><Link className="nav-link" to="/welcome/admin">Home</Link></li>}
                     {userLoggedIn && <li><Link className="nav-link" to="/todos">Todos</Link></li>}
                 </ul>
                 <ul className="navbar-nav navbar-collapse justify-content-end">
